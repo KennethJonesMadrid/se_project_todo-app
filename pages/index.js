@@ -18,10 +18,13 @@ const closeModal = (modal) => {
   modal.classList.remove("popup_visible");
 };
 
-const generateTodo = (data) => {
+const renderTodo = (data) => {
   const todo = new Todo(data, "#todo-template");
   const todoElement = todo.getView();
-  return todoElement;
+
+  if (todoElement) {
+    todosList.append(todoElement);
+  }
 };
 
 addTodoButton.addEventListener("click", () => {
@@ -42,16 +45,13 @@ addTodoForm.addEventListener("submit", (evt) => {
 
   const id = uuidv4();
   const values = { name, date, id };
-  const todo = generateTodo(values);
-  todosList.append(todo);
-  addTodoForm.reset();
-  newTodoValidator.resetValidation();
+  renderTodo(values);
   closeModal(addTodoPopup);
+  newTodoValidator.resetValidation();
 });
 
 initialTodos.forEach((item) => {
-  const todo = generateTodo(item);
-  todosList.append(todo);
+  renderTodo(item);
 });
 
 const newTodoValidator = new FormValidator(validationConfig, addTodoForm);

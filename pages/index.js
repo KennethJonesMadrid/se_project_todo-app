@@ -18,25 +18,22 @@ function handleCheck(completed) {
   todoCounter.updateCompleted(completed);
 }
 
+function generateTodo(values) {
+  return new Todo(values, "#todo-template", handleCheck, (wasCompleted) => {
+    todoCounter.updateTotal(false);
+    if (wasCompleted) {
+      todoCounter.updateCompleted(false);
+    }
+  }).getView();
+}
+
 const addTodoPopup = new PopupWithForm({
   popupSelector: "#add-todo-popup",
   formSubmitHandler: (inputValues) => {
     const id = uuidv4();
     const values = { ...inputValues, id };
 
-    const todo = new Todo(
-      values,
-      "#todo-template",
-      handleCheck,
-      (wasCompleted) => {
-        todoCounter.updateTotal(false);
-        if (wasCompleted) {
-          todoCounter.updateCompleted(false);
-        }
-      }
-    );
-
-    const todoElement = todo.getView();
+    const todoElement = generateTodo(values);
 
     if (todoElement) {
       section.addItem(todoElement);
@@ -52,19 +49,7 @@ addTodoPopup.setEventListeners();
 const section = new Section({
   items: initialTodos,
   renderer: (item) => {
-    const todo = new Todo(
-      item,
-      "#todo-template",
-      handleCheck,
-      (wasCompleted) => {
-        todoCounter.updateTotal(false);
-        if (wasCompleted) {
-          todoCounter.updateCompleted(false);
-        }
-      }
-    );
-
-    const todoElement = todo.getView();
+    const todoElement = generateTodo(item);
 
     if (todoElement) {
       section.addItem(todoElement);
